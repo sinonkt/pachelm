@@ -1,15 +1,15 @@
 import click
-from pachadm.create import create
-from pachadm.migrate import migrate
-from pachadm.rollback import rollback
-from pachadm.clean import clean
-from pachadm.test import test
-from pachadm.core import PachydermAdminContext
+from pachydelm.create import create
+from pachydelm.migrate import migrate
+from pachydelm.rollback import rollback
+from pachydelm.clean import clean
+from pachydelm.test import test
+from pachydelm.core import PachydermAdminContext
 
 VERSION='0.0.1'
-# packageLoader = PackageLoader('pachadm', 'templates')
+# packageLoader = PackageLoader('pachydelm', 'templates')
 
-# packageLoader = PackageLoader('pachadm', 'templates')
+# packageLoader = PackageLoader('pachydelm', 'templates')
 
 @click.group(invoke_without_command=True)
 @click.option('--migrationsDir', '-m', default='./migrations', help="specify directory to keep migrations.")

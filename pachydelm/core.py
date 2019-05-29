@@ -4,7 +4,7 @@ import subprocess
 from python_pachyderm import PfsClient, PpsClient
 import python_pachyderm.client.pps.pps_pb2 as proto
 from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoescape
-from pachadm.utils import list_files, extract_filename_to_migration
+from pachydelm.utils import list_files, extract_filename_to_migration
 
 from google.protobuf import json_format
 
@@ -36,7 +36,7 @@ class PachydermAdminContext(object):
       self.pachydermConfigsDir = pachydermconfigsdir
       self.pachydermConfigs = from_dir_to_sorted_migrations(pachydermconfigsdir)
       self.env = Environment(
-        loader=FileSystemLoader('pachadm/templates', followlinks=True),
+        loader=FileSystemLoader('pachydelm/templates', followlinks=True),
         autoescape=select_autoescape(['py'])
       )
 

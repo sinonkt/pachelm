@@ -1,5 +1,5 @@
 import click
-from pachadm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name
+from pachydelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name
 
 entities = ['repo', 'pipeline']
 templateByResource = {

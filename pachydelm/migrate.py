@@ -1,7 +1,7 @@
 import click
 from importlib import import_module
 from importlib.util import spec_from_file_location, module_from_spec
-from pachadm.utils import extract_filename_to_migration
+from pachydelm.utils import extract_filename_to_migration
 
 ## Credit about dynamic module in python: https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
 @click.command()

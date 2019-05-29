@@ -1,4 +1,4 @@
-name: pachyderm-hq
+name: pachydelm
 channels:
   - defaults
 dependencies:

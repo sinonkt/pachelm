@@ -3,7 +3,7 @@ import json
 import python_pachyderm
 import python_pachyderm.client.pps.pps_pb2 as proto
 
-from pachadm.core import PachydermMigration
+from pachydelm.core import PachydermMigration
 
 from google.protobuf import json_format
 
@@ -27,8 +27,8 @@ def test(ctx):
     click.echo('test something')
     migration = PachydermMigration(ctx)
 
-    filePath = '%s/eiei.json' % (ctx.pachydermConfigsDir)
-    migration.create_pipeline_from_file(filePath)
+    # filePath = '%s/eiei.json' % (ctx.pachydermConfigsDir)
+    # migration.create_pipeline_from_file(filePath)
 
 # def create_pipeline(	self,
 #  pipeline_name,

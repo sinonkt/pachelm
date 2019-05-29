@@ -15,7 +15,7 @@ conda install -y conda-build click setuptools-git
 # conda build python-pachyderm
 
 # Next things
-# Build pachadm, dev examples workflow for both contribute & own work.
+# Build pachydelm, dev examples workflow for both contribute & own work.
 # python-pachyderm get version mismatch for some method like pfs_client.provenances_for_repo('test-pipeline').
 
 # pip install -e .

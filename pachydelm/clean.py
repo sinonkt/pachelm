@@ -1,6 +1,6 @@
 import shutil
 import click
-from pachadm.utils import deletePrompt
+from pachydelm.utils import deletePrompt
 
 @click.command()
 @click.pass_obj
