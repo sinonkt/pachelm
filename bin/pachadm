@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+from pachadm import cli
+
+if __name__ == '__main__':
+    cli.entry()

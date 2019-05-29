@@ -1,0 +1,7 @@
+.vscode
+data
+migrations
+configs
+*.egg-info
+python-pachyderm
+src/python-pachyderm-master

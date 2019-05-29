@@ -1,0 +1,21 @@
+{
+  "pipeline": {
+    "name": "test-pipeline"
+  },
+  "transform": {
+    "cmd": ["/bin/bash"],
+    "stdin": [
+      "ls -al"
+    ]
+  },
+  "parallelism_spec": {
+    "constant": "1"
+  },
+  "standby": true,
+  "input": {
+    "pfs": {
+      "repo": "test",
+      "glob": "/*"
+    }
+  }
+}
