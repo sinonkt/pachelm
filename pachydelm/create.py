@@ -16,6 +16,8 @@ fns = {
 def renderResource(ctx, args, baseName, pachyderm_config=False):
   (dirPath, suffix, extension) = (ctx.pachydermConfigsDir, "_config", "json") if pachyderm_config else (ctx.migrationsDir, "", "py")
   template = ctx.env.get_template(templateByResource['%s%s' %(args['resource'], suffix)])
+  print(args)
+  print('hure', args['migration'])
   rendered = template.render(ctx=ctx, args=args, fns=fns)
   # entityDir = dirPath if pachyderm_config else '%s/%ss' % (dirPath, args['resource'])
   mkdir_p(dirPath)
@@ -33,16 +35,17 @@ def renderResource(ctx, args, baseName, pachyderm_config=False):
 def create(ctx, **kwargs):
   """ Create Migrations & Seeds & corresponding pachyderm json config"""
   (timestamp, datetimeStr) = getDateTimestampAndString()
-  kwargs['migration'] = '%s_%s' % (kwargs['resource'], kwargs['migration']) if kwargs['migration'] else '%s_%s' % (kwargs['resource'], kwargs['name'])
-  baseFileName = '%s_%s' %(datetimeStr, kwargs['migration'])
+  combined_migration_name = '%s_%s_%s' % (kwargs['name'], kwargs['resource'], kwargs['migration']) if kwargs['migration'] else '%s_%s_%s' % (kwargs['name'], kwargs['resource'], kwargs['name'])
+  kwargs['migration'] = kwargs['migration'] or kwargs['name']
+  baseFileName = '%s_%s' %(datetimeStr, combined_migration_name)
   try:
     renderResource(ctx, kwargs, baseFileName)
     if kwargs['resource'] == 'pipeline':
       renderResource(ctx, kwargs, baseFileName, True)
   except KeyError:
     raise Exception('Unknown resource...')
-  except:
-    raise Exception('Something went wrong...')
+  # except:
+  #   raise Exception('Something went wrong...')
 
 # 2015_03_13_195049_create_testtable2_table
 # 2015_03_13_195050_create_testtable_table

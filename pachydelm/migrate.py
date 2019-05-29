@@ -10,6 +10,7 @@ def migrate(ctx):
   """ Migrate module"""
   # print(ctx.migrations)
   for migration in ctx.migrations:
+    print(migration)
     spec = spec_from_file_location(migration['migration'], migration['path'])
     module = module_from_spec(spec)
     spec.loader.exec_module(module)
