@@ -1,8 +1,10 @@
 {
+  "version": 1,
   "pipeline": {
     "name": "{{ args.name }}"
   },
   "transform": {
+    "image": "ubuntu:16.04",
     "cmd": ["/bin/bash"],
     "stdin": [
       "ls -al"
@@ -11,11 +13,20 @@
   "parallelism_spec": {
     "constant": 1
   },
+  "resource_requests": {
+    "memory": "64M"
+  },
+  "max_queue_size": 1,
+  "datum_tries": 3,
+  "cache_size": "64M",
   "standby": true,
   "input": {
     "pfs": {
+      "name": "test",
       "repo": "test",
+      "branch": "master",
       "glob": "/*"
     }
-  }
+  },
+  "output_branch": "master"
 }

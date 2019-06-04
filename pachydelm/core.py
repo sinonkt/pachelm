@@ -7,7 +7,7 @@ from python_pachyderm import PfsClient, PpsClient
 import python_pachyderm.client.pps.pps_pb2 as proto
 from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoescape
 from importlib.util import spec_from_file_location, module_from_spec
-from pachydelm.utils import list_files, strToTimestamp, to_class_name
+from pachydelm.utils import list_files, strToTimestamp, to_class_name, convert, force_number, map_nested_dicts_modify
 
 from google.protobuf.json_format import ParseDict, MessageToDict
 
@@ -95,14 +95,17 @@ class PachydermMigration(object):
         with open(filePath) as f:
             pipelineConfig = json.load(f)
 
-        parsed = ParseDict(pipelineConfig, proto.PipelineInfo())
+        parsed = ParseDict(pipelineConfig, proto.PipelineInfo(), ignore_unknown_fields=True)
         pipelineName = parsed.pipeline.name
         configDict = MessageToDict(parsed, including_default_value_fields=False)
-        onlyPythonPachydermKeysConfigDict = { oldKey: value for oldKey, value in configDict.items() if oldKey in fields }
-        try:
-          self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict)
-        except Exception:
-          print('Something went wrong...(May be pipeline `%s` already exists)' % (pipelineName))
+        onlyPythonPachydermKeysConfigDict = { convert(oldKey): value for oldKey, value in configDict.items() if convert(oldKey) in fields }
+        # try:
+        
+        map_nested_dicts_modify(onlyPythonPachydermKeysConfigDict, force_number)
+        print(onlyPythonPachydermKeysConfigDict)
+        self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict)
+        # except Exception:
+        #   print('Something went wrong...(May be pipeline `%s` already exists)' % (pipelineName))
 
     def delete_pipeline_from_file(self, filePath):
         with open(filePath, 'r') as f:

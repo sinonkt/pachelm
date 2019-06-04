@@ -23,5 +23,6 @@ dependencies:
   - xz=5.2.4=h14c3975_4
   - zlib=1.2.11=h7b6447c_3
   - pip:
+    - deepdiff==4.0.6
     - "--editable=git+https://github.com/pachyderm/python-pachyderm.git@faaea725837a2deecfe99b28d65dd98342c9e939#egg=python-pachyderm-master"
 prefix: /home/krittin/miniconda3/envs/pachyderm-hq
