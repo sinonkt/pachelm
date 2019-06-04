@@ -3,9 +3,11 @@ from pachydelm.core import PachydermMigration
 
 class {{ fns.to_class_name(args['migration']) }}(PachydermMigration):
 
-  def up():
+  def up(self):
+    self.create_pipeline_from_file('{{ args.pachydermConfigFilePath }}')
     print('huhu_eiei_{{ args.name }}')
 
-  def down():
+  def down(self):
+    self.delete_pipeline_from_file('{{ args.pachydermConfigFilePath }}')
     print('down_eiei_{{ args.name }}')
     

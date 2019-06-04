@@ -41,21 +41,7 @@ def mkdir_p(path):
     else:
       raise
 
-# Don't forget to adapt negative lookhead instead of hard code ^(?!.*bar).*$
-EXTRACT_PATTERN = '(\d*)_(\d*)_(\d*)_(\d*)_(.*)_(pipeline|repo|seed)_([^.]*).(py|json)'
 
-def extract_filename_to_migration(filename):
-  matched = re.match(EXTRACT_PATTERN, filename)
-  [year, month, day, time, resource, resource_type, migration, extension] = [ matched.group(i) for i in range(1, 9)  ]
-  return {
-    "time": strToTimestamp("%s_%s_%s_%s" % (year, month, day, time)),
-    "resource": resource,
-    "resource_type": resource_type,
-    "migration": migration,
-    "class_name": to_class_name(migration),
-    "extension": extension,
-    "path": filename
-  }
 
 def list_files(dirPath):
   if exists(dirPath):

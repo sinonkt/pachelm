@@ -3,9 +3,11 @@ from pachydelm.core import PachydermMigration
 
 class {{ fns.to_class_name(args['migration']) }}(PachydermMigration):
 
-  def up():
-    print('huhu_eiei_{{ args.name }}')
+  def up(self):
+    self.pfs.create_repo('{{ args.name }}', '{{ args.description or "auto-generated description of repo (%s)" % (args.name) }}')
+    print('up_eiei_{{ args.name }}')
 
-  def down():
+  def down(self):
+    self.pfs.delete_repo(repo_name='{{ args.name }}')
     print('down_eiei_{{ args.name }}')
     

@@ -1,7 +1,9 @@
 import click
+from os.path import join, dirname
 from pachydelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name
 
 entities = ['repo', 'pipeline']
+
 templateByResource = {
   "repo": "repo_migration.py.tmpl",
   "pipeline": "pipeline_migration.py.tmpl",
@@ -13,19 +15,15 @@ fns = {
   'to_class_name': to_class_name
 }
 
-def renderResource(ctx, args, baseName, pachyderm_config=False):
-  (dirPath, suffix, extension) = (ctx.pachydermConfigsDir, "_config", "json") if pachyderm_config else (ctx.migrationsDir, "", "py")
-  template = ctx.env.get_template(templateByResource['%s%s' %(args['resource'], suffix)])
-  print(args)
-  print('hure', args['migration'])
+def renderResource(ctx, args, filePath, resource_type):
+  template = ctx.env.get_template(templateByResource[resource_type])
   rendered = template.render(ctx=ctx, args=args, fns=fns)
-  # entityDir = dirPath if pachyderm_config else '%s/%ss' % (dirPath, args['resource'])
-  mkdir_p(dirPath)
-  filePath = '%s/%s.%s' % (dirPath, baseName, extension)
+  mkdir_p(dirname(filePath))
   if overwritePrompt([filePath]):
     fileObj = open(filePath, "w+")
     fileObj.write(rendered)
     fileObj.close()
+
 
 @click.command()
 @click.argument('resource')
@@ -36,12 +34,18 @@ def create(ctx, **kwargs):
   """ Create Migrations & Seeds & corresponding pachyderm json config"""
   (timestamp, datetimeStr) = getDateTimestampAndString()
   combined_migration_name = '%s_%s_%s' % (kwargs['name'], kwargs['resource'], kwargs['migration']) if kwargs['migration'] else '%s_%s_%s' % (kwargs['name'], kwargs['resource'], kwargs['name'])
-  kwargs['migration'] = kwargs['migration'] or kwargs['name']
   baseFileName = '%s_%s' %(datetimeStr, combined_migration_name)
+  (migrationFilePath, pachydermConfigFilePath) = ctx.get_pipeline_path(baseFileName)
+  kwargs = {
+    **kwargs,
+    "migration": kwargs['migration'] or kwargs['name'],
+    "migrationFilePath": migrationFilePath,
+    "pachydermConfigFilePath": pachydermConfigFilePath
+  }
   try:
-    renderResource(ctx, kwargs, baseFileName)
+    renderResource(ctx, kwargs, migrationFilePath, kwargs['resource'])
     if kwargs['resource'] == 'pipeline':
-      renderResource(ctx, kwargs, baseFileName, True)
+      renderResource(ctx, kwargs, pachydermConfigFilePath, kwargs['resource'] + '_config')
   except KeyError:
     raise Exception('Unknown resource...')
   # except:
