@@ -20,12 +20,34 @@ fields = [
     "scheduling_spec", "pod_spec", "pod_patch"
 ]
 
+def verify_is_pipeline_exists(ctx, pipeline):
+    try:
+        ctx.pps.inspect_pipeline()
+        return True
+    except Exception:
+        return False
+
 @click.command()
 @click.pass_obj
 def test(ctx):
     """ test module"""
     click.echo('test something')
     migration = PachydermMigration(ctx)
+
+    print(verify_is_pipeline_exists(ctx, 'test-pipeline'))
+
+    jobs = list(ctx.pps.list_job('test-pipeline').job_info)
+    # print(jobs[0].state)
+    list(map(lambda x: x, jobs))
+    pipelines = list(ctx.pps.list_pipeline().pipeline_info)
+    print(jobs)
+    print(pipelines)
+    # for job in jobs:
+    #     print(job)
+    # print(list(map(jobs.job_info, lambda x: x.state)))
+    # print((jobs, lambda x: x.state)))
+    # for job in enumerate(jobs):
+    #     print(job)
 
     # filePath = '%s/eiei.json' % (ctx.pachydermConfigsDir)
     # migration.create_pipeline_from_file(filePath)
