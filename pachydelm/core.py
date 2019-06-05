@@ -13,20 +13,6 @@ from pachydelm.migration import PachydermMigration
 # Don't forget to adapt negative lookhead instead of hard code ^(?!.*bar).*$
 EXTRACT_PATTERN = '(\d*)_(\d*)_(\d*)_(\d*)_(.*)_(pipeline|repo|seed)_([^.]*).(py|json)'
 
-# fields = [field.name for field in proto.PipelineInfo.DESCRIPTOR.fields]
-# deprecated: scale_down_threshold
-# no usecases/docs: hashtree_spec
-FIELDS = [
-    "transform", "parallelism_spec", "egress", "update",
-    "output_branch", "resource_requests",
-    "resource_limits", "input", "description", "cache_size", "enable_stats",
-    "reprocess", "batch", "max_queue_size", "service", "chunk_spec",
-    "datum_timeout", "job_timeout", "salt", "standby", "datum_tries",
-    "scheduling_spec", "pod_spec", "pod_patch"
-]
-
-IGNORED_FROM_DIFF_FIELDS = [ 'created_at', 'salt', 'spec_commit', 'state']
-
 def extract_filename_to_migration(filename):
     matched = re.match(EXTRACT_PATTERN, filename)
     [year, month, day, time, resource, resource_type, migration, extension] = [ matched.group(i) for i in range(1, 9)  ]
@@ -43,18 +29,10 @@ def extract_filename_to_migration(filename):
 # don't forget to sort .sort(key='time')
 def from_dir_to_sorted_migrations(dirPath):
     files = list_files(dirPath)
-    print(files)
     prepend_dir_path_to_migration = lambda m: { **m, 'path': '%s/%s' % (dirPath, m['path']) }
     migrations = map(extract_filename_to_migration, files)
     prepended_migrations = map(prepend_dir_path_to_migration, migrations)
     return list(prepended_migrations)
-
-def verify_is_pipeline_exists(ctx, pipeline):
-    try:
-        ctx.pps.inspect_pipeline(pipeline)
-        return True
-    except Exception:
-        return False
 
 class PachydermAdminContext(object):
     'Singleton PachydermClient'
@@ -85,3 +63,11 @@ class PachydermAdminContext(object):
         module = module_from_spec(spec)
         spec.loader.exec_module(module)
         return getattr(module, migration['class_name'])(self)
+    
+    def find_pipeline_config(self, pipeline):
+        filtered = list(filter(lambda config: config["resource"] == pipeline, self.pachydermConfigs))
+        return filtered[0] if filtered else None
+
+    def find_migration(self, migration):
+        filtered = list(filter(lambda config: config["migration"] == migration, self.migrations))
+        return filtered[0] if filtered else None

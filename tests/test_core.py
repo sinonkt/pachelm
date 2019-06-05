@@ -1,15 +1,13 @@
 import pytest
 from pachydelm.migration import PachydermMigration
 
-def test_answer(ctx):
+def test_find_pipeline_config(ctx):
     # print(ctx)
     # print(ctx.migrations)
     migration = PachydermMigration(ctx)
-    # print(ctx.pachydermConfigs)
-    # print(ctx.find_pipeline_config('test-pipeline'))
-    # migration.diff('test-pipeline', ctx.find_pipeline_config('test-pipeline'))
+    difference = migration.diff('test-pipeline', ctx.find_pipeline_config('test-pipeline').get('path'))
     # diff(ctx)
-    assert 5 == 5
+    assert 4 == 5
     # print(
     # print(verify_is_pipeline_exists(ctx, 'test-pipeline'))
     # jobs = list(ctx.pps.list_job('test-pipeline').job_info)
