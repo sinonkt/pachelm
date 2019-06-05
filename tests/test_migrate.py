@@ -1,3 +1,13 @@
+import pytest
+from pachydelm.migrate import migrate
+# from pachydelm.core import PachydermAdminContext
+
+@pytest.mark.usefixtures("ctx")
+def test_answer(ctx):
+    # print(ctx)
+    print(ctx.migrations)
+    assert 5 == 5
+
 import click
 import json
 import ast
@@ -27,13 +37,6 @@ fields = [
 
 ignored_from_diff_fields = [ 'created_at', 'salt', 'spec_commit', 'state']
 
-def verify_is_pipeline_exists(ctx, pipeline):
-    try:
-        ctx.pps.inspect_pipeline()
-        return True
-    except Exception:
-        return False
-
 @click.command()
 @click.pass_obj
 def test(ctx):
@@ -51,13 +54,13 @@ def test(ctx):
     print("********************************* Inspect PipelineInfo *********************************")
     print(pipelineInfo)
     print("****************************************************************************************")
-    print("********************************* load ConfigJson *********************************")
+    print("************************************ load ConfigJson ***********************************")
     print(loaded)
     print("****************************************************************************************")
-    print("********************************* Diff *********************************")
+    print("*************************************** Diff *******************************************")
     ddiff = DeepDiff(pipelineInfo, loaded, verbose_level=2)
-    pprint(ddiff, indent = 2)
-    
+    pprint(ddiff, indent=2)
+    print("****************************************************************************************")
     # print(
     # print(verify_is_pipeline_exists(ctx, 'test-pipeline'))
     # jobs = list(ctx.pps.list_job('test-pipeline').job_info)
@@ -76,34 +79,3 @@ def test(ctx):
 
     # filePath = '%s/eiei.json' % (ctx.pachydermConfigsDir)
     # migration.create_pipeline_from_file(filePath)
-
-# def create_pipeline(	self,
-#  pipeline_name,
-#   transform=None,
-#   parallelism_spec=None,
-#   hashtree_spec=None,
-#   egress=None,
-#   update=None,
-#   output_branch=None,
-#   scale_down_threshold=None,
-#   resource_requests=None,
-#   resource_limits=None,
-#   input=None,
-#   description=None,
-#   cache_size=None,
-#   enable_stats=None,
-#   reprocess=None,
-#   batch=None,
-#   max_queue_size=None,
-#   service=None,
-#   chunk_spec=None,
-#   datum_timeout=None,
-#   job_timeout=None,
-#   salt=None,
-#   standby=None,
-#   datum_tries=None,
-#   scheduling_spec=None,
-#   pod_spec=None,
-#   pod_patch=None
-# def create_pipeline(	self, pipeline_name, transform=None, parallelism_spec=None, hashtree_spec=None, egress=None, update=None, output_branch=None, scale_down_threshold=None, resource_requests=None, resource_limits=None, input=None, description=None, cache_size=None, enable_stats=None, reprocess=None, batch=None, max_queue_size=None, service=None, chunk_spec=None, datum_timeout=None, job_timeout=None, salt=None, standby=None, datum_tries=None, scheduling_spec=None, pod_spec=None, pod_patch=None)
-# json_format.Parse(json.loads(json.dumps(response).get('status')), apiai_pb2.Status, ignore_unknown_fields=False)

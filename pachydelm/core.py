@@ -39,11 +39,18 @@ def extract_filename_to_migration(filename):
 # don't forget to sort .sort(key='time')
 def from_dir_to_sorted_migrations(dirPath):
     files = list_files(dirPath)
+    print(files)
     prepend_dir_path_to_migration = lambda m: { **m, 'path': '%s/%s' % (dirPath, m['path']) }
     migrations = map(extract_filename_to_migration, files)
     prepended_migrations = map(prepend_dir_path_to_migration, migrations)
     return list(prepended_migrations)
 
+def verify_is_pipeline_exists(ctx, pipeline):
+    try:
+        ctx.pps.inspect_pipeline(pipeline)
+        return True
+    except Exception:
+        return False
 
 class PachydermAdminContext(object):
     'Singleton PachydermClient'
@@ -74,7 +81,6 @@ class PachydermAdminContext(object):
         module = module_from_spec(spec)
         spec.loader.exec_module(module)
         return getattr(module, migration['class_name'])(self)
-
 
 class PachydermMigration(object):
 
