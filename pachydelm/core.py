@@ -7,14 +7,16 @@ from python_pachyderm import PfsClient, PpsClient
 import python_pachyderm.client.pps.pps_pb2 as proto
 from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoescape
 from importlib.util import spec_from_file_location, module_from_spec
-from pachydelm.utils import list_files, strToTimestamp, to_class_name, convert, force_number, map_nested_dicts_modify
-
-from google.protobuf.json_format import ParseDict, MessageToDict
+from pachydelm.utils import list_files, strToTimestamp, to_class_name 
+from pachydelm.migration import PachydermMigration
 
 # Don't forget to adapt negative lookhead instead of hard code ^(?!.*bar).*$
 EXTRACT_PATTERN = '(\d*)_(\d*)_(\d*)_(\d*)_(.*)_(pipeline|repo|seed)_([^.]*).(py|json)'
 
-fields = [
+# fields = [field.name for field in proto.PipelineInfo.DESCRIPTOR.fields]
+# deprecated: scale_down_threshold
+# no usecases/docs: hashtree_spec
+FIELDS = [
     "transform", "parallelism_spec", "egress", "update",
     "output_branch", "resource_requests",
     "resource_limits", "input", "description", "cache_size", "enable_stats",
@@ -22,6 +24,8 @@ fields = [
     "datum_timeout", "job_timeout", "salt", "standby", "datum_tries",
     "scheduling_spec", "pod_spec", "pod_patch"
 ]
+
+IGNORED_FROM_DIFF_FIELDS = [ 'created_at', 'salt', 'spec_commit', 'state']
 
 def extract_filename_to_migration(filename):
     matched = re.match(EXTRACT_PATTERN, filename)
@@ -81,50 +85,3 @@ class PachydermAdminContext(object):
         module = module_from_spec(spec)
         spec.loader.exec_module(module)
         return getattr(module, migration['class_name'])(self)
-
-class PachydermMigration(object):
-
-    def __init__(self, ctx):
-        self.pfs = ctx.pfs
-        self.pps = ctx.pps
-
-    def up(self):
-        """ Setup """
-        return
-
-    def down(self):
-        """ Teardown """
-        return
-
-    def create_pipeline_from_file(self, filePath):
-        """ Create Pipeline from pachyderm pipeline json config file. """
-        with open(filePath) as f:
-            pipelineConfig = json.load(f)
-
-        parsed = ParseDict(pipelineConfig, proto.PipelineInfo(), ignore_unknown_fields=True)
-        pipelineName = parsed.pipeline.name
-        configDict = MessageToDict(parsed, including_default_value_fields=False)
-        onlyPythonPachydermKeysConfigDict = { convert(oldKey): value for oldKey, value in configDict.items() if convert(oldKey) in fields }
-        # try:
-        
-        map_nested_dicts_modify(onlyPythonPachydermKeysConfigDict, force_number)
-        print(onlyPythonPachydermKeysConfigDict)
-        self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict)
-        # except Exception:
-        #   print('Something went wrong...(May be pipeline `%s` already exists)' % (pipelineName))
-
-    def delete_pipeline_from_file(self, filePath):
-        with open(filePath, 'r') as f:
-            obj = json.load(f)
-        self.pps.delete_pipeline(obj.get('pipeline').get('name'))
-
-# verify is pipeline/repo already exists.
-# inspect status of existing deployment
-# for pipeline check integrity of pipeline config.json is there any change on those field.
-
-# migration till specified migration, all migrations before these was migrate.
-
-# rollback to specified migration all migrations after that was rollback
-
-
-# error getting pipelineInfo: could not read existing PipelineInfo from PFS: commit 0186370b401a477394e4adc816bb64cf not found in repo __spec__
