@@ -27,4 +27,6 @@ dependencies:
     - pytest==4.6.2
     - pytest-watch==4.2.0
     - pprint==0.1
+    - tqdm==4.32.1
+    - twine==1.13.0
     - "--editable=git+https://github.com/pachyderm/python-pachyderm.git@faaea725837a2deecfe99b28d65dd98342c9e939#egg=python-pachyderm-master"

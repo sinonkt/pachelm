@@ -4,7 +4,7 @@ from os.path import dirname
 from pachelm.core import PachydermAdminContext
 from pachelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name, deletePrompt
 
-VERSION='0.0.1'
+VERSION='0.0.3'
 
 entities = ['repo', 'pipeline']
 
@@ -27,6 +27,7 @@ fns = {
 @click.pass_context
 def entry(ctx, **kwargs):
   """ Pachydelm, Main purpose is the opinionated framework to ease working with pachyderm pipeline deployment"""
+  print(VERSION)
   ctx.obj = PachydermAdminContext(**{ "version": VERSION, **kwargs })
   if ctx.invoked_subcommand is None:
     click.echo('I was invoked without subcommand')
