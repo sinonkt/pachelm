@@ -7,8 +7,8 @@ from python_pachyderm import PfsClient, PpsClient
 import python_pachyderm.client.pps.pps_pb2 as proto
 from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoescape
 from importlib.util import spec_from_file_location, module_from_spec
-from pachydelm.utils import list_files, strToTimestamp, to_class_name 
-from pachydelm.migration import PachydermMigration
+from pachelm.utils import list_files, strToTimestamp, to_class_name 
+from pachelm.migration import PachydermMigration
 
 # Don't forget to adapt negative lookhead instead of hard code ^(?!.*bar).*$
 EXTRACT_PATTERN = '(\d*)_(\d*)_(\d*)_(\d*)_(.*)_(pipeline|repo|seed)_([^.]*).(py|json)'
@@ -45,7 +45,7 @@ class PachydermAdminContext(object):
         self.pachydermConfigsDir = pachydermconfigsdir
         self.pachydermConfigs = from_dir_to_sorted_migrations(pachydermconfigsdir)
         self.env = Environment(
-          loader=FileSystemLoader('pachydelm/templates', followlinks=True),
+          loader=FileSystemLoader('pachelm/templates', followlinks=True),
           autoescape=select_autoescape(['py'])
         )
 

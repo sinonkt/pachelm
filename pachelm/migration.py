@@ -3,7 +3,7 @@ from pprint import pprint
 from deepdiff import DeepDiff
 import python_pachyderm.client.pps.pps_pb2 as proto
 from google.protobuf.json_format import ParseDict, MessageToDict
-from pachydelm.utils import convert, force_number, map_nested_dicts_modify
+from pachelm.utils import convert, force_number, map_nested_dicts_modify
 
 IGNORED_FROM_DIFF_FIELDS = [ 'created_at', 'salt', 'spec_commit', 'state', 'version']
 

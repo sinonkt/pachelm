@@ -1,8 +1,8 @@
 import click
 import shutil
 from os.path import dirname
-from pachydelm.core import PachydermAdminContext
-from pachydelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name, deletePrompt
+from pachelm.core import PachydermAdminContext
+from pachelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name, deletePrompt
 
 VERSION='0.0.1'
 

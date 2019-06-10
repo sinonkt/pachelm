@@ -1,3 +1,4 @@
-pachdelm create repo -n t
-pachdelm create pipeline -n tp
-pachdelm create pipeline -n e
+pachelm create repo -n t-input
+pachelm create repo -n e-input
+pachelm create pipeline -n t
+pachelm create pipeline -n e

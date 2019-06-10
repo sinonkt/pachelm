@@ -1,4 +1,4 @@
-name: pachydelm
+name: pachelm
 channels:
   - defaults
 dependencies:
@@ -28,4 +28,3 @@ dependencies:
     - pytest-watch==4.2.0
     - pprint==0.1
     - "--editable=git+https://github.com/pachyderm/python-pachyderm.git@faaea725837a2deecfe99b28d65dd98342c9e939#egg=python-pachyderm-master"
-prefix: /home/krittin/miniconda3/envs/pachyderm-hq
