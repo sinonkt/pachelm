@@ -7,22 +7,26 @@ def test_get_pipeline(ctx):
     emptyMigration = PachydermMigration(ctx)
     assert emptyMigration.get_pipeline('test-pipeline') != None
 
+def test_get_repo(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    assert emptyMigration.get_repo('test-input') != None
+
 def test_not_exist_pipeline(ctx):
     emptyMigration = PachydermMigration(ctx)
     assert emptyMigration.get_pipeline('not-existed-pipeline') == None
 
+def test_not_exist_repo(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    assert emptyMigration.get_repo('not-existed-repo') == None
+
 def test_diff(ctx):
     emptyMigration = PachydermMigration(ctx)
     testPipeline = emptyMigration.get_pipeline('test-pipeline')
-    diff = emptyMigration.diff('test-pipeline', updated_config_path)
+    diff = emptyMigration._diff('test-pipeline', updated_config_path)
     expected_changed = {
         'values_changed': {
             "root['parallelism_spec']['constant']": {
                 'new_value': 3,
-                'old_value': 1
-            },
-            "root['version']": {
-                'new_value': 2,
                 'old_value': 1
             }
         }
@@ -31,5 +35,12 @@ def test_diff(ctx):
 
 def test_none_diff_compare_to_current_config(ctx):
     emptyMigration = PachydermMigration(ctx)
-    diff = emptyMigration.diff('test-pipeline')
+    diff = emptyMigration._diff('test-pipeline')
     assert diff == {}
+
+def test_is_resource_already_exist(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    assert emptyMigration.is_resource_already_exist('test-pipeline') == True
+    assert emptyMigration.is_resource_already_exist('test-input') == True
+    assert emptyMigration.is_resource_already_exist('not-exist') == False
+

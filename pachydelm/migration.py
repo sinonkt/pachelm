@@ -34,37 +34,34 @@ class PachydermMigration(object):
         """ Teardown """
         return
 
-    def create_repo(self, *args, **kwargs):
-        self.pfs.create_repo(*args, **kwargs)
+    def create_repo(self, repo_name, *args, **kwargs):
+        if not self.is_resource_already_exist(repo_name):
+            self.pfs.create_repo(repo_name, *args, **kwargs)
     
-    def delete_repo(self, *args, **kwargs):
-        self.pfs.delete_repo(*args, **kwargs)
+    def delete_repo(self, repo_name, *args, **kwargs):
+        if self.is_resource_already_exist(repo_name):
+            self.pfs.delete_repo(repo_name, *args, **kwargs)
 
     def create_pipeline_from_file(self, filePath):
         """ Create Pipeline from pachyderm pipeline json config file. """
         pipelineConfig = self.__load_json_config(filePath)
         parsed = ParseDict(pipelineConfig, proto.PipelineInfo(), ignore_unknown_fields=True)
         pipelineName = parsed.pipeline.name
-        configDict = MessageToDict(parsed, including_default_value_fields=False)
-        onlyPythonPachydermKeysConfigDict = { convert(oldKey): value for oldKey, value in configDict.items() if convert(oldKey) in FIELDS }
-        # try:
+        updated = self._has_pipeline_config_changed(pipelineName)
+        if (not self.is_resource_already_exist(pipelineName)) or updated:
+            configDict = MessageToDict(parsed, including_default_value_fields=False)
+            onlyPythonPachydermKeysConfigDict = { convert(oldKey): value for oldKey, value in configDict.items() if convert(oldKey) in FIELDS }
+            map_nested_dicts_modify(onlyPythonPachydermKeysConfigDict, force_number)
+            self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict, update=updated)
         
-        map_nested_dicts_modify(onlyPythonPachydermKeysConfigDict, force_number)
-        # print(onlyPythonPachydermKeysConfigDict)
-        self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict)
-        # except Exception:
-        #   print('Something went wrong...(May be pipeline `%s` already exists)' % (pipelineName))
+        if updated: 
+            print('%s Updating...' % (pipelineName))
 
     def delete_pipeline_from_file(self, filePath):
         obj = self.__load_json_config(filePath)
-        self.pps.delete_pipeline(obj.get('pipeline').get('name'))
-
-    def verify_is_pipeline_exists(self, pipeline):
-        try:
-            self.pps.inspect_pipeline(pipeline)
-            return True
-        except Exception:
-            return False
+        pipelineName = obj.get('pipeline').get('name')
+        if self.is_resource_already_exist(pipelineName):
+            self.pps.delete_pipeline(pipelineName)
 
     def get_pipeline(self, pipeline):
         try:
@@ -76,16 +73,34 @@ class PachydermMigration(object):
         except Exception:
             return None
 
+    def get_repo(self, repo):
+        try:
+            inspected = self.pfs.inspect_repo(repo)
+            repoInfo = MessageToDict(inspected, including_default_value_fields=False)
+            map_nested_dicts_modify(repoInfo, force_number)
+            return repoInfo
+        except Exception:
+            return None
+
     def __load_json_config(self, filePath):
         with open(filePath, 'r') as f:
             loaded = json.loads(f.read())
         return loaded
 
-    def diff(self, pipeline, jsonConfigPath=None):
+    def _diff(self, pipeline, jsonConfigPath=None):
         pipelineInfo = self.get_pipeline(pipeline)
         configPath = jsonConfigPath or self.ctx.find_pipeline_config(pipeline).get('path')
         loaded = self.__load_json_config(configPath)
         return DeepDiff(pipelineInfo, loaded, verbose_level=2)
+    
+    def _has_pipeline_config_changed(self, pipeline):
+        return self._diff(pipeline) != {}
+    
+    def is_resource_already_exist(self, resource):
+        if self.get_pipeline(resource) or self.get_repo(resource):
+            print('resource %s already exists...' % (resource))
+            return True
+        return False
 
 # verify is pipeline/repo already exists.
 # inspect status of existing deployment
