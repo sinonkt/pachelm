@@ -5,7 +5,7 @@ import python_pachyderm.client.pps.pps_pb2 as proto
 from google.protobuf.json_format import ParseDict, MessageToDict
 from pachydelm.utils import convert, force_number, map_nested_dicts_modify
 
-IGNORED_FROM_DIFF_FIELDS = [ 'created_at', 'salt', 'spec_commit', 'state']
+IGNORED_FROM_DIFF_FIELDS = [ 'created_at', 'salt', 'spec_commit', 'state', 'version']
 
 # fields = [field.name for field in proto.PipelineInfo.DESCRIPTOR.fields]
 # deprecated: scale_down_threshold
@@ -34,6 +34,14 @@ class PachydermMigration(object):
         """ Teardown """
         return
 
+    def invoke_up(self):
+        """ Tearup Wrapper Method"""
+        self.up()
+
+    def invoke_down(self):
+        """ Teardown Wrapper Method """
+        self.down()
+
     def create_repo(self, repo_name, *args, **kwargs):
         if not self.is_resource_already_exist(repo_name):
             self.pfs.create_repo(repo_name, *args, **kwargs)
@@ -48,14 +56,15 @@ class PachydermMigration(object):
         parsed = ParseDict(pipelineConfig, proto.PipelineInfo(), ignore_unknown_fields=True)
         pipelineName = parsed.pipeline.name
         updated = self._has_pipeline_config_changed(pipelineName)
+        if updated: 
+            print(self._diff(pipelineName))
+            print('%s Updating...' % (pipelineName))
+
         if (not self.is_resource_already_exist(pipelineName)) or updated:
             configDict = MessageToDict(parsed, including_default_value_fields=False)
             onlyPythonPachydermKeysConfigDict = { convert(oldKey): value for oldKey, value in configDict.items() if convert(oldKey) in FIELDS }
             map_nested_dicts_modify(onlyPythonPachydermKeysConfigDict, force_number)
             self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict, update=updated)
-        
-        if updated: 
-            print('%s Updating...' % (pipelineName))
 
     def delete_pipeline_from_file(self, filePath):
         obj = self.__load_json_config(filePath)
@@ -93,8 +102,8 @@ class PachydermMigration(object):
         loaded = self.__load_json_config(configPath)
         return DeepDiff(pipelineInfo, loaded, verbose_level=2)
     
-    def _has_pipeline_config_changed(self, pipeline):
-        return self._diff(pipeline) != {}
+    def _has_pipeline_config_changed(self, *args):
+        return self._diff(*args) != {}
     
     def is_resource_already_exist(self, resource):
         if self.get_pipeline(resource) or self.get_repo(resource):
@@ -102,9 +111,11 @@ class PachydermMigration(object):
             return True
         return False
 
-# verify is pipeline/repo already exists.
-# inspect status of existing deployment
-# for pipeline check integrity of pipeline config.json is there any change on those field.
+# verify is pipeline/repo already exists. [complete]
+# inspect status of existing deployment.
+# for pipeline check integrity of pipeline config.json is there any change on those field. [complete]
+
+# delete or updating prompt with some info about diff.
 
 # migration till specified migration, all migrations before these was migrate.
 # rollback to specified migration all migrations after that was rollback

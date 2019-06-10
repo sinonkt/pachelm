@@ -19,10 +19,11 @@ def test_not_exist_repo(ctx):
     emptyMigration = PachydermMigration(ctx)
     assert emptyMigration.get_repo('not-existed-repo') == None
 
-def test_diff(ctx):
+def test_diff_and_has_changed(ctx):
     emptyMigration = PachydermMigration(ctx)
     testPipeline = emptyMigration.get_pipeline('test-pipeline')
     diff = emptyMigration._diff('test-pipeline', updated_config_path)
+    has_changed = emptyMigration._has_pipeline_config_changed('test-pipeline', updated_config_path)
     expected_changed = {
         'values_changed': {
             "root['parallelism_spec']['constant']": {
@@ -32,6 +33,7 @@ def test_diff(ctx):
         }
     }
     assert diff == expected_changed
+    assert has_changed == True
 
 def test_none_diff_compare_to_current_config(ctx):
     emptyMigration = PachydermMigration(ctx)

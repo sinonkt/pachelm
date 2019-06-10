@@ -84,4 +84,4 @@ class PachydermAdminContext(object):
         (repos, pipelines, seeds) = self.get_migrations_by_resource_type(reverse=reverse)
         migrations = (seeds + pipelines + repos) if reverse else (repos + pipelines + seeds)
       for migration in migrations:
-        getattr(self.instantiate_module_from_migration(migration), method)()
+        getattr(self.instantiate_module_from_migration(migration), "invoke_%s" % (method))()
