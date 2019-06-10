@@ -71,3 +71,17 @@ class PachydermAdminContext(object):
     def find_migration(self, migration):
         filtered = list(filter(lambda config: config["migration"] == migration, self.migrations))
         return filtered[0] if filtered else None
+
+    def tear_up(self, migrations=None):
+      self.__tear(migrations, 'up')
+
+    def tear_down(self, migrations=None):
+      self.__tear(migrations, 'down')
+
+    def __tear(self, migrations, method):
+      reverse = False if method == 'up' else True
+      if not migrations:
+        (repos, pipelines, seeds) = self.get_migrations_by_resource_type(reverse=reverse)
+        migrations = (seeds + pipelines + repos) if reverse else (repos + pipelines + seeds)
+      for migration in migrations:
+        getattr(self.instantiate_module_from_migration(migration), method)()

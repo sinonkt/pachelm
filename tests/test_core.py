@@ -1,28 +1,16 @@
 import pytest
 from pachydelm.migration import PachydermMigration
 
-def test_find_pipeline_config(ctx):
-    # print(ctx)
-    # print(ctx.migrations)
-    migration = PachydermMigration(ctx)
-    difference = migration.diff('test-pipeline', ctx.find_pipeline_config('test-pipeline').get('path'))
-    # diff(ctx)
-    assert 4 == 5
-    # print(
-    # print(verify_is_pipeline_exists(ctx, 'test-pipeline'))
-    # jobs = list(ctx.pps.list_job('test-pipeline').job_info)
-    # list(map(lambda x: x, jobs))
-    # pipelines = list(ctx.pps.list_pipeline().pipeline_info)
-    # print(jobs)
-    # print(pipelines)
-    
-    # print(jobs[0].state)
-    # for job in jobs:
-    #     print(job)
-    # print(list(map(jobs.job_info, lambda x: x.state)))
-    # print((jobs, lambda x: x.state)))
-    # for job in enumerate(jobs):
-    #     print(job)
+# need to test all find methods
+examplePipeline = {'time': 1559661455.0, 'resource': 'example-pipeline', 'resource_type': 'pipeline', 'migration': 'example-pipeline', 'class_name': 'ExamplePipeline', 'extension': 'py', 'path': './tests/migrations/2019_06_04_221735_example-pipeline_pipeline_example-pipeline.py'}
+examplePipelineConfig = {'time': 1559661455.0, 'resource': 'example-pipeline', 'resource_type': 'pipeline', 'migration': 'example-pipeline', 'class_name': 'ExamplePipeline', 'extension': 'json', 'path': './tests/configs/2019_06_04_221735_example-pipeline_pipeline_example-pipeline.json'}
 
-    # filePath = '%s/eiei.json' % (ctx.pachydermConfigsDir)
-    # migration.create_pipeline_from_file(filePath)
+def test_find_pipeline_config(example_ctx):
+    assert example_ctx.find_pipeline_config('example-pipeline') == examplePipelineConfig
+
+def test_find_migration(example_ctx):
+    assert example_ctx.find_migration('example-pipeline') == examplePipeline
+
+def test_lookup(example_ctx):
+    assert len(example_ctx.migrations) == 4
+    assert len(example_ctx.pachydermConfigs) == 2

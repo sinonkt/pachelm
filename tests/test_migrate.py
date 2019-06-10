@@ -1,30 +1,35 @@
 import pytest
 from pachydelm.migration import PachydermMigration
 
-def test_answer(ctx):
-    # print(ctx)
-    # print(ctx.migrations)
-    migration = PachydermMigration(ctx)
-    # print(ctx.pachydermConfigs)
-    # print(ctx.find_pipeline_config('test-pipeline'))
-    # migration.diff('test-pipeline', ctx.find_pipeline_config('test-pipeline'))
-    # diff(ctx)
-    assert 5 == 5
-    # print(
-    # print(verify_is_pipeline_exists(ctx, 'test-pipeline'))
-    # jobs = list(ctx.pps.list_job('test-pipeline').job_info)
-    # list(map(lambda x: x, jobs))
-    # pipelines = list(ctx.pps.list_pipeline().pipeline_info)
-    # print(jobs)
-    # print(pipelines)
-    
-    # print(jobs[0].state)
-    # for job in jobs:
-    #     print(job)
-    # print(list(map(jobs.job_info, lambda x: x.state)))
-    # print((jobs, lambda x: x.state)))
-    # for job in enumerate(jobs):
-    #     print(job)
+updated_config_path = './tests/updated_configs/2019_06_04_221735_test-pipeline_pipeline_test-pipeline.json'
 
-    # filePath = '%s/eiei.json' % (ctx.pachydermConfigsDir)
-    # migration.create_pipeline_from_file(filePath)
+def test_get_pipeline(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    assert emptyMigration.get_pipeline('test-pipeline') != None
+
+def test_not_exist_pipeline(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    assert emptyMigration.get_pipeline('not-existed-pipeline') == None
+
+def test_diff(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    testPipeline = emptyMigration.get_pipeline('test-pipeline')
+    diff = emptyMigration.diff('test-pipeline', updated_config_path)
+    expected_changed = {
+        'values_changed': {
+            "root['parallelism_spec']['constant']": {
+                'new_value': 3,
+                'old_value': 1
+            },
+            "root['version']": {
+                'new_value': 2,
+                'old_value': 1
+            }
+        }
+    }
+    assert diff == expected_changed
+
+def test_none_diff_compare_to_current_config(ctx):
+    emptyMigration = PachydermMigration(ctx)
+    diff = emptyMigration.diff('test-pipeline')
+    assert diff == {}

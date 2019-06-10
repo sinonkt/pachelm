@@ -38,18 +38,14 @@ def entry(ctx, **kwargs):
 @click.pass_obj
 def migrate(ctx):
   """ Migrate module"""
-  (repos, pipelines, seeds) = ctx.get_migrations_by_resource_type()
-  for migration in repos + pipelines + seeds:
-    ctx.instantiate_module_from_migration(migration).up()
+  ctx.tear_up()
   click.echo('Migrating...')
 
 @entry.command()
 @click.pass_obj
 def rollback(ctx):
   """ Rollback module"""
-  (repos, pipelines, seeds) = ctx.get_migrations_by_resource_type(reverse=True)
-  for migration in seeds + pipelines + repos:
-    ctx.instantiate_module_from_migration(migration).down()
+  ctx.tear_down()
   click.echo('Rolling back...')
 
 def renderResource(ctx, args, filePath, resource_type):

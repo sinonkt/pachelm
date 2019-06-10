@@ -67,40 +67,30 @@ class PachydermMigration(object):
             return False
 
     def get_pipeline(self, pipeline):
-        inspected = self.pps.inspect_pipeline(pipeline)
-        messageDict = MessageToDict(inspected, including_default_value_fields=False)
-        pipelineInfo = { convert(k) : v for k, v in messageDict.items() if convert(k) not in IGNORED_FROM_DIFF_FIELDS }
-        map_nested_dicts_modify(pipelineInfo, force_number)
-        return pipelineInfo
+        try:
+            inspected = self.pps.inspect_pipeline(pipeline)
+            messageDict = MessageToDict(inspected, including_default_value_fields=False)
+            pipelineInfo = { convert(k) : v for k, v in messageDict.items() if convert(k) not in IGNORED_FROM_DIFF_FIELDS }
+            map_nested_dicts_modify(pipelineInfo, force_number)
+            return pipelineInfo
+        except Exception:
+            return None
 
     def __load_json_config(self, filePath):
         with open(filePath, 'r') as f:
             loaded = json.loads(f.read())
         return loaded
 
-    def diff(self, pipeline, jsonConfigPath):
+    def diff(self, pipeline, jsonConfigPath=None):
         pipelineInfo = self.get_pipeline(pipeline)
-        loaded = self.__load_json_config(jsonConfigPath)
-        print("********************************* Inspect PipelineInfo *********************************")
-        print(pipelineInfo)
-        print("****************************************************************************************")
-        print("************************************ load ConfigJson ***********************************")
-        print(loaded)
-        print("****************************************************************************************")
-        print("*************************************** Diff *******************************************")
-        ddiff = DeepDiff(pipelineInfo, loaded, verbose_level=2)
-        pprint(ddiff, indent=2)
-        print("****************************************************************************************")
-        print("****************************************************************************************")
-
+        configPath = jsonConfigPath or self.ctx.find_pipeline_config(pipeline).get('path')
+        loaded = self.__load_json_config(configPath)
+        return DeepDiff(pipelineInfo, loaded, verbose_level=2)
 
 # verify is pipeline/repo already exists.
 # inspect status of existing deployment
 # for pipeline check integrity of pipeline config.json is there any change on those field.
 
 # migration till specified migration, all migrations before these was migrate.
-
 # rollback to specified migration all migrations after that was rollback
-
-
 # error getting pipelineInfo: could not read existing PipelineInfo from PFS: commit 0186370b401a477394e4adc816bb64cf not found in repo __spec__
