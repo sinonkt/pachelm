@@ -1,5 +1,5 @@
 import pytest
-from pachydelm.utils import map_nested_dicts_modify
+from pachelm.utils import map_nested_dicts_modify
 
 def test_map_nested_dicts_modify():
     obj = { 'a': 1, 'b': 2, 'c': { 'x': 3, 'y': 4 }}

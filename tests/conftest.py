@@ -1,7 +1,7 @@
 import pytest
-from pachydelm.core import PachydermAdminContext
-from pachydelm.migration import PachydermMigration
-from pachydelm.cli import VERSION
+from pachelm.core import PachydermAdminContext
+from pachelm.migration import PachydermMigration
+from pachelm.cli import VERSION
 
 test_migrations = lambda ctx: [ctx.find_migration('test-input'), ctx.find_migration('test-pipeline')]
 example_migrations = lambda ctx: [ctx.find_migration('example'), ctx.find_migration('example-pipeline')]

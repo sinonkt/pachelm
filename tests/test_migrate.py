@@ -1,5 +1,5 @@
 import pytest
-from pachydelm.migration import PachydermMigration
+from pachelm.migration import PachydermMigration
 
 updated_config_path = './tests/updated_configs/2019_06_04_221735_test-pipeline_pipeline_test-pipeline.json'
 

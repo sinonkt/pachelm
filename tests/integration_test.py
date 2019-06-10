@@ -1,5 +1,5 @@
 import pytest
-from pachydelm.migration import PachydermMigration
+from pachelm.migration import PachydermMigration
 
 def test_find_pipeline_config(ctx):
     # print(ctx)
