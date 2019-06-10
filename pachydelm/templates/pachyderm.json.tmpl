@@ -1,5 +1,4 @@
 {
-  "version": 1,
   "pipeline": {
     "name": "{{ args.name }}"
   },
@@ -22,8 +21,8 @@
   "standby": true,
   "input": {
     "pfs": {
-      "name": "test",
-      "repo": "test",
+      "name": "{{ args.name }}-input",
+      "repo": "{{ args.name }}-input",
       "branch": "master",
       "glob": "/*"
     }

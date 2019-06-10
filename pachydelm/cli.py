@@ -84,9 +84,12 @@ def create(ctx, **kwargs):
   #   raise Exception('Something went wrong...')
 
 @entry.command()
+@click.option('--force', '-f', is_flag=True, help="Force rollback before cleaning....")
 @click.pass_obj
-def clean(ctx):
+def clean(ctx, force):
   """ Clean all migrations & config """
+  if force:
+    ctx.tear_down()
   try:
     if deletePrompt([ctx.migrationsDir, ctx.pachydermConfigsDir]):
       shutil.rmtree(ctx.migrationsDir)

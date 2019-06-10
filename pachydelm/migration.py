@@ -94,7 +94,7 @@ class PachydermMigration(object):
     def __load_json_config(self, filePath):
         with open(filePath, 'r') as f:
             loaded = json.loads(f.read())
-        return loaded
+        return { k: v for k, v in loaded.items() if k not in IGNORED_FROM_DIFF_FIELDS }
 
     def _diff(self, pipeline, jsonConfigPath=None):
         pipelineInfo = self.get_pipeline(pipeline)

@@ -4,10 +4,19 @@ from pachydelm.core import PachydermMigration
 class {{ fns.to_class_name(args['migration']) }}(PachydermMigration):
 
   def up(self):
-    # self.create_repo('{{ args.name }}', '{{ args.description or "auto-generated description of repo (%s)" % (args.name) }}')
+    # another way to deal with commit.
+    # commitId = self.pfs.start_commit(repo_name, branch=None, parent=None)
+    # self.pfs.finish_commit(commit)
+    
+    # with self.pfs.commit('repo', 'branch') as c:
+    #   self.pfs.put_file_bytes(c, path, value, delimiter=0, target_file_datums=0, target_file_bytes=0)
+    #   self.pfs.put_file_url(c, path, url, recursive=False)
     print('up_eiei_{{ args.name }}')
 
   def down(self):
-    # self.delete_repo(repo_name='{{ args.name }}')
+    # self.pfs.get_file(self, commit, path, offset_bytes=0, size_bytes=0, extract_value=True)
+    # self.pfs.get_files('test/master', '/', recursive=True)
+    # deletes files or not is up to you
     print('down_eiei_{{ args.name }}')
+    
     
