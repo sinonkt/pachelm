@@ -25,3 +25,7 @@ conda install -y conda-build click setuptools-git
 2019-05-28T09:45:32Z INFO pps.API.call64 {"duration":0.000026444,"request":{"pipeline":{"name":"test-pipeline"},"salt":"5a738ec86ad04489bd2e25d97bb2e716"},"response":null} []
 panic: runtime error: invalid memory address or nil pointer dereference
 [signal SIGSEGV: segmentation violation code=0x1 addr=0x8 pc=0x1ce205d] -->
+
+# build command
+python setup.py bdist_wheel
+twine upload dist/*

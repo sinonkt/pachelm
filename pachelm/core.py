@@ -34,6 +34,7 @@ def from_dir_to_sorted_migrations(dirPath):
     prepended_migrations = map(prepend_dir_path_to_migration, migrations)
     return list(prepended_migrations)
 
+# FileSystemLoader('pachelm/templates', followlinks=True),
 class PachydermAdminContext(object):
     'Singleton PachydermClient'
     def __init__(self, version, migrationsdir, pachydermconfigsdir):
@@ -45,7 +46,7 @@ class PachydermAdminContext(object):
         self.pachydermConfigsDir = pachydermconfigsdir
         self.pachydermConfigs = from_dir_to_sorted_migrations(pachydermconfigsdir)
         self.env = Environment(
-          loader=FileSystemLoader('pachelm/templates', followlinks=True),
+          loader=PackageLoader('pachelm', 'templates'),
           autoescape=select_autoescape(['py'])
         )
 

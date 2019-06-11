@@ -4,7 +4,7 @@ from os.path import dirname
 from pachelm.core import PachydermAdminContext
 from pachelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name, deletePrompt
 
-VERSION='0.0.3'
+VERSION='0.0.4'
 
 entities = ['repo', 'pipeline']
 
@@ -18,8 +18,6 @@ templateByResource = {
 fns = {
   'to_class_name': to_class_name
 }
-
-# packageLoader = PackageLoader('pachydelm', 'templates')
 
 @click.group(invoke_without_command=True)
 @click.option('--migrationsDir', '-m', default='./migrations', help="specify directory to keep migrations.")
