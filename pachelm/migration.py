@@ -3,7 +3,7 @@ from pprint import pprint
 from deepdiff import DeepDiff
 import python_pachyderm.client.pps.pps_pb2 as proto
 from google.protobuf.json_format import ParseDict, MessageToDict
-from pachelm.utils import convert, force_number, map_nested_dicts_modify
+from pachelm.utils import convert, force_number, map_nested_dicts_modify, map_nested_dicts_modify_key
 
 IGNORED_FROM_DIFF_FIELDS = [ 'created_at', 'salt', 'spec_commit', 'state', 'version']
 
@@ -63,8 +63,9 @@ class PachydermMigration(object):
         if (not self.is_resource_already_exist(pipelineName)) or updated:
             configDict = MessageToDict(parsed, including_default_value_fields=False)
             onlyPythonPachydermKeysConfigDict = { convert(oldKey): value for oldKey, value in configDict.items() if convert(oldKey) in FIELDS }
-            map_nested_dicts_modify(onlyPythonPachydermKeysConfigDict, force_number)
-            self.pps.create_pipeline(pipelineName, **onlyPythonPachydermKeysConfigDict, update=updated)
+            convertedDict = map_nested_dicts_modify_key(onlyPythonPachydermKeysConfigDict, convert)
+            map_nested_dicts_modify(convertedDict, force_number)
+            self.pps.create_pipeline(pipelineName, **convertedDict, update=updated)
 
     def delete_pipeline_from_file(self, filePath):
         obj = self.__load_json_config(filePath)

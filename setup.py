@@ -7,7 +7,7 @@ with open("requirements.txt") as f:
 
 setup(
      name='pachelm',  
-     version='0.0.4',
+     version='0.0.23',
      scripts=['bin/pachelm'] ,
      author="Krittin Phornsiricharoenphant",
      author_email="oatkrittin@gmail.com",
@@ -16,6 +16,7 @@ setup(
      long_description_content_type="text/markdown",
      url="https://github.com/sinonkt/pachelm",
      packages=find_packages(),
+     package_data={'pachelm': ['pachelm/templates/*.tmpl']},
      install_requires=install_requires,
      classifiers=[
          "Programming Language :: Python :: 3",

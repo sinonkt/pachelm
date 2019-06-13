@@ -67,3 +67,12 @@ def map_nested_dicts_modify(ob, func):
           map_nested_dicts_modify(v, func)
         else:
           ob[k] = func(v)
+
+def map_nested_dicts_modify_key(ob, func):
+    newOb = {}
+    for k, v in ob.items():
+        if isinstance(v, Mapping):
+            newOb[func(k)] = map_nested_dicts_modify_key(v, func)
+        else:
+            newOb[func(k)] = v
+    return newOb

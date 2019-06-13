@@ -4,7 +4,7 @@ from os.path import dirname
 from pachelm.core import PachydermAdminContext
 from pachelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name, deletePrompt
 
-VERSION='0.0.4'
+VERSION='0.0.23'
 
 entities = ['repo', 'pipeline']
 

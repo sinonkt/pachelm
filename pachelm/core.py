@@ -1,7 +1,7 @@
 import re
 import json
 import subprocess
-from os.path import join
+from os.path import join, dirname, realpath 
 from operator import itemgetter
 from python_pachyderm import PfsClient, PpsClient
 import python_pachyderm.client.pps.pps_pb2 as proto
@@ -9,6 +9,8 @@ from jinja2 import Environment, PackageLoader, FileSystemLoader, select_autoesca
 from importlib.util import spec_from_file_location, module_from_spec
 from pachelm.utils import list_files, strToTimestamp, to_class_name 
 from pachelm.migration import PachydermMigration
+
+absolute_package_dir=dirname(realpath(__file__))
 
 # Don't forget to adapt negative lookhead instead of hard code ^(?!.*bar).*$
 EXTRACT_PATTERN = '(\d*)_(\d*)_(\d*)_(\d*)_(.*)_(pipeline|repo|seed)_([^.]*).(py|json)'
@@ -34,7 +36,8 @@ def from_dir_to_sorted_migrations(dirPath):
     prepended_migrations = map(prepend_dir_path_to_migration, migrations)
     return list(prepended_migrations)
 
-# FileSystemLoader('pachelm/templates', followlinks=True),
+# loader=FileSystemLoader('pachelm', followlinks=True),
+print(absolute_package_dir)
 class PachydermAdminContext(object):
     'Singleton PachydermClient'
     def __init__(self, version, migrationsdir, pachydermconfigsdir):
@@ -46,8 +49,8 @@ class PachydermAdminContext(object):
         self.pachydermConfigsDir = pachydermconfigsdir
         self.pachydermConfigs = from_dir_to_sorted_migrations(pachydermconfigsdir)
         self.env = Environment(
-          loader=PackageLoader('pachelm', 'templates'),
-          autoescape=select_autoescape(['py'])
+          loader=FileSystemLoader('%s/templates' % (absolute_package_dir), followlinks=True),
+          autoescape=select_autoescape(['py', 'py.tmpl', 'tmpl', 'json.tmpl'])
         )
 
     def get_pipeline_path(self, baseFileName):
