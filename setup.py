@@ -7,7 +7,7 @@ with open("requirements.txt") as f:
 
 setup(
      name='pachelm',  
-     version='0.0.24',
+     version='0.0.25',
      scripts=['bin/pachelm'] ,
      author="Krittin Phornsiricharoenphant",
      author_email="oatkrittin@gmail.com",

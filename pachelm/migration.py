@@ -1,4 +1,5 @@
 import json
+import glob
 from pprint import pprint
 from deepdiff import DeepDiff
 import python_pachyderm.client.pps.pps_pb2 as proto
@@ -112,18 +113,16 @@ class PachydermMigration(object):
             return True
         return False
 
-    def put_file(self, repo, branch, path, filePaths):
+    def put_file(self, repo, branch, path, globPattern):
+        files = glob.glob(self.ctx.dataDir + globPattern, recursive=True)
         with self.pfs.commit(repo, branch) as c:
-            if isinstance(filePaths, list):
-                for filePath in filePaths:
-                    self._put_file(c, repo, branch, "%s/%s" % (path, filePath), filePath)
-            else:
-                self._put_file(c, repo, branch, path, filePaths)
+            for filePath in files:
+                path = (filePath.replace(self.ctx.dataDir, ''))
+                self._put_file(c, repo, branch, path, filePath)
 
     def _put_file(self, c, repo, branch, path, filePath):
-        dataFilePath ="%s/%s" % (self.ctx.dataDir, filePath) 
-        print("%s --> %s" % (dataFilePath, path))
-        f = open(dataFilePath, 'rb')
+        print("%s --> %s" % (filePath, path))
+        f = open(filePath, 'rb')
         self.pfs.put_file_bytes(c, path, f.read())
         f.close()
             
