@@ -37,10 +37,9 @@ def from_dir_to_sorted_migrations(dirPath):
     return list(prepended_migrations)
 
 # loader=FileSystemLoader('pachelm', followlinks=True),
-print(absolute_package_dir)
 class PachydermAdminContext(object):
     'Singleton PachydermClient'
-    def __init__(self, version, migrationsdir, pachydermconfigsdir):
+    def __init__(self, version, migrationsdir, pachydermconfigsdir, datadir):
         self.pfs = PfsClient()
         self.pps = PpsClient()
         self.version = version
@@ -48,6 +47,7 @@ class PachydermAdminContext(object):
         self.migrations = from_dir_to_sorted_migrations(migrationsdir)
         self.pachydermConfigsDir = pachydermconfigsdir
         self.pachydermConfigs = from_dir_to_sorted_migrations(pachydermconfigsdir)
+        self.dataDir = datadir
         self.env = Environment(
           loader=FileSystemLoader('%s/templates' % (absolute_package_dir), followlinks=True),
           autoescape=select_autoescape(['py', 'py.tmpl', 'tmpl', 'json.tmpl'])

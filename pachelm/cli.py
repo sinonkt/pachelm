@@ -4,7 +4,7 @@ from os.path import dirname
 from pachelm.core import PachydermAdminContext
 from pachelm.utils import getDateTimestampAndString, mkdir_p, overwritePrompt, to_class_name, deletePrompt
 
-VERSION='0.0.23'
+VERSION='0.0.24'
 
 entities = ['repo', 'pipeline']
 
@@ -22,10 +22,12 @@ fns = {
 @click.group(invoke_without_command=True)
 @click.option('--migrationsDir', '-m', default='./migrations', help="specify directory to keep migrations.")
 @click.option('--pachydermConfigsDir', '-p', default='./configs', help="specify directory to keep pachderm json configs.")
+@click.option('--dataDir', '-d', default='./data', help="specify directory to keep data for seed.")
 @click.pass_context
 def entry(ctx, **kwargs):
   """ Pachydelm, Main purpose is the opinionated framework to ease working with pachyderm pipeline deployment"""
   print(VERSION)
+  print(kwargs)
   ctx.obj = PachydermAdminContext(**{ "version": VERSION, **kwargs })
   if ctx.invoked_subcommand is None:
     click.echo('I was invoked without subcommand')

@@ -112,6 +112,24 @@ class PachydermMigration(object):
             return True
         return False
 
+    def put_file(self, repo, branch, path, filePaths):
+        with self.pfs.commit(repo, branch) as c:
+            if isinstance(filePaths, list):
+                for filePath in filePaths:
+                    self._put_file(c, repo, branch, "%s/%s" % (path, filePath), filePath)
+            else:
+                self._put_file(c, repo, branch, path, filePaths)
+
+    def _put_file(self, c, repo, branch, path, filePath):
+        dataFilePath ="%s/%s" % (self.ctx.dataDir, filePath) 
+        print("%s --> %s" % (dataFilePath, path))
+        f = open(dataFilePath, 'rb')
+        self.pfs.put_file_bytes(c, path, f.read())
+        f.close()
+            
+
+# def put_file_bytes(	self, commit, path, value, delimiter=0, target_file_datums=0, target_file_bytes=0)
+
 # verify is pipeline/repo already exists. [complete]
 # inspect status of existing deployment.
 # for pipeline check integrity of pipeline config.json is there any change on those field. [complete]
