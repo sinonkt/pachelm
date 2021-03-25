@@ -30,7 +30,7 @@ pyparsing==2.4.0
 pytest==4.6.2
 pytest-watch==4.2.0
 python-pachyderm==1.8.6.post2
-PyYAML==5.1.1
+PyYAML==5.4
 readme-renderer==24.0
 requests==2.22.0
 requests-toolbelt==0.9.1
